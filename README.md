@@ -46,6 +46,30 @@ npx hardhat test
 ```
 The tests ensure that the contract behaves as expected, including proper minting of tokens, respecting the time-lock mechanism, and adhering to the mint cap.
 
+# Xade Token Vesting
+Xade Token Vesting is a smart contract that enables vesting of tokens for a specific wallet over a specified duration.
+
+## Usage
+### Adding a Vesting Schedule
+A vesting schedule can be added for a specific wallet by calling the addVestingSchedule function with the following parameters:
+
+`wallet` (address): The address of the wallet to which the vesting schedule is to be added.
+`amount` (uint256): The total amount of tokens to be vested for the wallet.
+`start` (uint256): The timestamp from which the vesting schedule is to start.
+`duration` (uint256): The duration of the vesting schedule.
+`cliff` (uint256): The time period from which the tokens can start vesting.
+
+### Withdrawing Vesting Tokens
+Tokens can be withdrawn from a vesting schedule by calling the `withdraw` function with the wallet address as parameter.
+
+### Get Vesting Schedule Details
+The details of a vesting schedule can be fetched by calling the `getVestingSchedule` function with the wallet address as parameter.
+
+## Tests
+The Xade Token Vesting contract includes a test suite that covers the main functionality of the contract. To run the tests, use the following command:
+```bash
+npx hardhat test
+```
 
 # Hardhat Commands
 
@@ -60,3 +84,6 @@ REPORT_GAS=true npx hardhat test
 npx hardhat node
 npx hardhat run scripts/deploy.js
 ```
+
+# Credits
+Thank you to: https://github.com/abdelhamidbakhta/token-vesting-contracts 
