@@ -45,6 +45,13 @@ describe("Xade", function () {
     expect(addr1Balance).to.equal(1000);
   });
 
+  it("Should not allow minting token before one year has passed", async function () {
+    const mintAmount = ethers.utils.parseEther("1000");
+    await expect(
+      xade.connect(dev).mint(bob.address, mintAmount)
+    ).to.be.revertedWith("Xade::mint: minting not allowed yet");
+  });
+
   it("Should not allow minting tokens by non-minter", async function () {
     const mintAmount = ethers.utils.parseEther("1000");
     await expect(
@@ -72,5 +79,29 @@ describe("Xade", function () {
     await expect(
       xade.connect(dev).mintAnnualInflation(alice.address)
     ).to.be.revertedWith("Xade::mintAnnualInflation: minting not allowed yet");
+  });
+
+  it("Should not allow minting annual inflation tokens by non-minter", async function () {
+    await expect(
+      xade.connect(alice).mintAnnualInflation(bob.address)
+    ).to.be.revertedWith("Xade::mintAnnualInflation: only the minter can mint");
+  });
+
+  it("Should not allow to call mint after calling the minting annual inflation of tokens", async function () {
+    // Move forward in time
+    const minimumTimeBetweenMints = await xade.minimumTimeBetweenMints();
+
+    // Increase the time to allow minting
+    await time.increase(minimumTimeBetweenMints);
+
+    // Mint the annual inflation
+    await xade.connect(dev).mintAnnualInflation(alice.address);
+
+    const mintAmount = ethers.utils.parseEther("1000");
+
+    // Attempt to call mint after minting the annual inflation (should revert)
+    await expect(
+      xade.connect(dev).mint(bob.address, mintAmount)
+    ).to.be.revertedWith("Xade::mint: minting not allowed yet");
   });
 });
