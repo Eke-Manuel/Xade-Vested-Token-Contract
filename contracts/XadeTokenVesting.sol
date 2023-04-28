@@ -24,6 +24,7 @@ contract XadeTokenVesting is Ownable, ReentrancyGuard {
 
     // address of the ERC20 token
     ERC20 private immutable _token;
+    address public salesContract;
 
     bytes32[] private vestingSchedulesIds;
     mapping(bytes32 => VestingSchedule) private vestingSchedules;
@@ -61,8 +62,13 @@ contract XadeTokenVesting is Ownable, ReentrancyGuard {
      */
     fallback() external payable {}
 
+    function setSalesContract(address _salesContract) public onlyOwner {
+        require(_salesContract != address(0),"zero addr");
+        salesContract = _salesContract;
+    }
+
     /**
-     * @notice Creates a new vesting schedule for a beneficiary.
+     * @notice Creates a new vesting schedule for a beneficiary
      * @param _beneficiary address of the beneficiary to whom vested tokens are transferred
      * @param _start start time of the vesting period
      * @param _cliff duration in seconds of the cliff in which tokens will begin to vest
@@ -80,46 +86,47 @@ contract XadeTokenVesting is Ownable, ReentrancyGuard {
         bool _revocable,
         uint256 _amount
     ) external onlyOwner {
-        require(
-            getWithdrawableAmount() >= _amount,
-            "XadeTokenVesting::createVestingSchedule: cannot create vesting schedule because not sufficient tokens"
-        );
-        require(
-            _duration > 0,
-            "XadeTokenVesting::createVestingSchedule: duration must be > 0"
-        );
-        require(
-            _amount > 0,
-            "XadeTokenVesting::createVestingSchedule: amount must be > 0"
-        );
-        require(
-            _slicePeriodSeconds >= 1,
-            "XadeTokenVesting::createVestingSchedule: slicePeriodSeconds must be >= 1"
-        );
-        require(
-            _duration >= _cliff,
-            "XadeTokenVesting::createVestingSchedule: duration must be >= cliff"
-        );
-        bytes32 vestingScheduleId = computeNextVestingScheduleIdForHolder(
-            _beneficiary
-        );
-        uint256 cliff = _start + _cliff;
-        vestingSchedules[vestingScheduleId] = VestingSchedule(
-            true,
+        _createVestingSchedule(
             _beneficiary,
-            cliff,
             _start,
+            _cliff,
             _duration,
             _slicePeriodSeconds,
             _revocable,
-            _amount,
-            0,
-            false
+            _amount
         );
-        vestingSchedulesTotalAmount = vestingSchedulesTotalAmount + _amount;
-        vestingSchedulesIds.push(vestingScheduleId);
-        uint256 currentVestingCount = holdersVestingCount[_beneficiary];
-        holdersVestingCount[_beneficiary] = currentVestingCount + 1;
+    }
+
+
+    /**
+     * @notice Creates a new vesting schedule for a buyer.
+     * @param _beneficiary address of the beneficiary to whom vested tokens are transferred
+     * @param _start start time of the vesting period
+     * @param _cliff duration in seconds of the cliff in which tokens will begin to vest
+     * @param _duration duration in seconds of the period in which the tokens will vest
+     * @param _slicePeriodSeconds duration of a slice period for the vesting in seconds
+     * @param _revocable whether the vesting is revocable or not
+     * @param _amount total amount of tokens to be released at the end of the vesting
+     */
+    function createSalesVestingSchedule(
+        address _beneficiary,
+        uint256 _start,
+        uint256 _cliff,
+        uint256 _duration,
+        uint256 _slicePeriodSeconds,
+        bool _revocable,
+        uint256 _amount
+    ) external {
+        require(msg.sender == salesContract,"!Sales contract");
+        _createVestingSchedule(
+            _beneficiary,
+            _start,
+            _cliff,
+            _duration,
+            _slicePeriodSeconds,
+            _revocable,
+            _amount
+        );
     }
 
     /**
@@ -366,5 +373,57 @@ contract XadeTokenVesting is Ownable, ReentrancyGuard {
      */
     function getCurrentTime() internal view virtual returns (uint256) {
         return block.timestamp;
+    }
+
+
+    function _createVestingSchedule(
+        address _beneficiary,
+        uint256 _start,
+        uint256 _cliff,
+        uint256 _duration,
+        uint256 _slicePeriodSeconds,
+        bool _revocable,
+        uint256 _amount
+    ) private {
+        require(
+            getWithdrawableAmount() >= _amount,
+            "XadeTokenVesting::createVestingSchedule: cannot create vesting schedule because not sufficient tokens"
+        );
+        require(
+            _duration > 0,
+            "XadeTokenVesting::createVestingSchedule: duration must be > 0"
+        );
+        require(
+            _amount > 0,
+            "XadeTokenVesting::createVestingSchedule: amount must be > 0"
+        );
+        require(
+            _slicePeriodSeconds >= 1,
+            "XadeTokenVesting::createVestingSchedule: slicePeriodSeconds must be >= 1"
+        );
+        require(
+            _duration >= _cliff,
+            "XadeTokenVesting::createVestingSchedule: duration must be >= cliff"
+        );
+        bytes32 vestingScheduleId = computeNextVestingScheduleIdForHolder(
+            _beneficiary
+        );
+        uint256 cliff = _start + _cliff;
+        vestingSchedules[vestingScheduleId] = VestingSchedule(
+            true,
+            _beneficiary,
+            cliff,
+            _start,
+            _duration,
+            _slicePeriodSeconds,
+            _revocable,
+            _amount,
+            0,
+            false
+        );
+        vestingSchedulesTotalAmount = vestingSchedulesTotalAmount + _amount;
+        vestingSchedulesIds.push(vestingScheduleId);
+        uint256 currentVestingCount = holdersVestingCount[_beneficiary];
+        holdersVestingCount[_beneficiary] = currentVestingCount + 1;
     }
 }

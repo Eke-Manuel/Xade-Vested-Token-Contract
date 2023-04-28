@@ -1,6 +1,6 @@
 # Xade Token & Xade Vested Token Contract
 
-This repo contains the Xade ERC-20 token (`Xade.sol`) and another smart contract called the `XadeTokenVesting.sol` which is for the vesting for the Xade ERC-20 Tokens
+This repo contains the Xade ERC-20 token (`Xade.sol`) and another smart contract called the `XadeTokenVesting.sol` which is for the vesting for the Xade ERC-20 Tokens. It also contains the sale contract for Xade tokens - `XadeTokenSales.sol`, which automatically vests the tokens after purchase.
 
 # Xade Token
 
@@ -48,61 +48,82 @@ await xade.connect(minter).mintAnnualInflation(destinationAddress);
 await xade.connect(minter).setMinter(newMinterAddress);
 ```
 
-## Tests
-
-The Xade Token contract includes a test suite that covers the main functionality of the contract. To run the tests, use the following command:
-
+### View on Polyscan:
 ```bash
-npx hardhat test
+0x539259b8513d677B51fA9274fB7c81a69ac35d84
 ```
 
-The tests ensure that the contract behaves as expected, including proper minting of tokens, respecting the time-lock mechanism, and adhering to the mint cap.
 
 # Xade Token Vesting
 
-Xade Token Vesting is a smart contract that enables vesting of tokens for a specific wallet over a specified duration.
+XadeTokenVesting is a smart contract that enables vesting of tokens for a specific wallet over a specified duration.
 
 ## Usage
 
-### Adding a Vesting Schedule
+### Adding a Vesting Schedule:
 
-A vesting schedule can be added for a specific wallet by calling the addVestingSchedule function with the following parameters:
+A vesting schedule can be added for a specific wallet by calling the createVestingSchedule function with the following parameters:
 
-`wallet` (address): The address of the wallet to which the vesting schedule is to be added.
-`amount` (uint256): The total amount of tokens to be vested for the wallet.
+`beneficiary` (address): The address of the wallet to which the vesting schedule is to be added.
 `start` (uint256): The timestamp from which the vesting schedule is to start.
-`duration` (uint256): The duration of the vesting schedule.
 `cliff` (uint256): The time period from which the tokens can start vesting.
+`duration` (uint256): The duration of the vesting schedule.
+`slicePeriodSeconds` (uint256): Duration of a slice period for the vesting in seconds.
+`revocable` (bool): Whether the vesting is revocable or not.
+`amount` (uint256): Total amount of tokens to be released at the end of the vesting.
 
-### Withdrawing Vesting Tokens
 
-Tokens can be withdrawn from a vesting schedule by calling the `withdraw` function with the wallet address as parameter.
 
-### Get Vesting Schedule Details
+### Withdrawing Vested Tokens at the end of the vesting period:
 
-The details of a vesting schedule can be fetched by calling the `getVestingSchedule` function with the wallet address as parameter.
+Tokens can be withdrawn from a vesting schedule by calling the `release` function with the vesting schedule ID and amount as parameters. To get your vesting schedule ID, call the `computeVestingScheduleIdForAddressAndIndex` function with your address and index of the schedule as parameters.
+The index can be 0 to n, where n is the number of vesting schedules associated with the address minus 1.
+The number of vesting schedules for a particular address can be gotten by calling the `getVestingSchedulesCountByBeneficiary` function with the address as the parameter. 
 
-## Tests
+### Get Vesting Schedule Details:
 
-The Xade Token Vesting contract includes a test suite that covers the main functionality of the contract. To run the tests, use the following command:
+The details of a vesting schedule can be fetched by calling the `getVestingSchedule` function with the schedule ID as as parameter.
+
+### View on Polyscan:
+```bash
+0x762d10549A7Ed1a502d6dF2A50C2fD70dAfe9744
+```
+
+
+
+# XadeTokenSales
+
+XadeTokenSales is a smart contract that enables purchase of Xade tokens which will automatically be vested for a period of 9 months. The token price will vary based on the value of the purchase as follows:
+
+Less than $200: `$0.0125` per token
+
+$200 to $2000: `$0.010` per token
+
+$2000 to $20000: `$0.009` per token
+
+$20,000 to $100,000: `$0.0075` per token 
+
+$100,000 or more: `$0.006` per token
+
+## Usage
+
+### Token Purchase
+To buy Xade tokens, call the `purchaseTokens` function with the beneficiary address and value of purchase(in USD) as parameters.
+Only purchases using USDC is supported for now.
+
+### View on Polyscan:
+```bash
+0xa46D163831f42d3c5d30A032Ab9AaB4813d46fDb
+```
+
+# Tests
+
+The repository includes a test suite that contains comprehensive tests of the functionality of all the contracts. To run the tests, use the following command:
 
 ```bash
-npx hardhat test
+yarn hardhat test
 ```
 
-# Hardhat Commands
-
-This project demonstrates a basic Hardhat use case. It comes with a sample contract, a test for that contract, and a script that deploys that contract.
-
-Try running some of the following tasks:
-
-```shell
-npx hardhat help
-npx hardhat test
-REPORT_GAS=true npx hardhat test
-npx hardhat node
-npx hardhat run scripts/deploy.js
-```
 
 # Credits
 
