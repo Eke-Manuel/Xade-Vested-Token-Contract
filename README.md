@@ -48,6 +48,11 @@ await xade.connect(minter).mintAnnualInflation(destinationAddress);
 await xade.connect(minter).setMinter(newMinterAddress);
 ```
 
+### View on Polyscan:
+```bash
+0x539259b8513d677B51fA9274fB7c81a69ac35d84
+```
+
 
 # Xade Token Vesting
 
@@ -79,6 +84,12 @@ The number of vesting schedules for a particular address can be gotten by callin
 
 The details of a vesting schedule can be fetched by calling the `getVestingSchedule` function with the schedule ID as as parameter.
 
+### View on Polyscan:
+```bash
+0x762d10549A7Ed1a502d6dF2A50C2fD70dAfe9744
+```
+
+
 
 # XadeTokenSales
 
@@ -100,6 +111,10 @@ $100,000 or more: `$0.006` per token
 To buy Xade tokens, call the `purchaseTokens` function with the beneficiary address and value of purchase(in USD) as parameters.
 Only purchases using USDC is supported for now.
 
+### View on Polyscan:
+```bash
+0xa46D163831f42d3c5d30A032Ab9AaB4813d46fDb
+```
 
 # Tests
 
