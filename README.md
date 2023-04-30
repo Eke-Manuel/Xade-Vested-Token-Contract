@@ -62,7 +62,7 @@ XadeTokenVesting is a smart contract that enables vesting of tokens for a specif
 
 ### Adding a Vesting Schedule:
 
-A vesting schedule can be added for a specific wallet by calling the createVestingSchedule function with the following parameters:
+A vesting schedule can be added for a specific wallet by calling the `createVestingSchedule` function with the following parameters:
 
 `beneficiary` (address): The address of the wallet to which the vesting schedule is to be added.
 `start` (uint256): The timestamp from which the vesting schedule is to start.
@@ -71,6 +71,9 @@ A vesting schedule can be added for a specific wallet by calling the createVesti
 `slicePeriodSeconds` (uint256): Duration of a slice period for the vesting in seconds.
 `revocable` (bool): Whether the vesting is revocable or not.
 `amount` (uint256): Total amount of tokens to be released at the end of the vesting.
+
+The `createSalesVestingSchedule` function works exactly the same as the above function except that it is only callable from the sales contract.
+
 
 
 
@@ -110,6 +113,8 @@ $100,000 or more: `$0.006` per token
 ### Token Purchase
 To buy Xade tokens, call the `purchaseTokens` function with the beneficiary address and value of purchase(in USD) as parameters.
 Only purchases using USDC is supported for now.
+
+Calling this function will automatically call the `createSalesVestingSchedule` function of the `XadeTokenVesting` contract described above to create a vesting schedule for the beneficiary. The vesting schedule created by this function is not revocable and has a duration of 9 months(assuming 30-day months). 
 
 ### View on Polyscan:
 ```bash
