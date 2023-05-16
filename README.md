@@ -118,7 +118,7 @@ Calling this function will automatically call the `createSalesVestingSchedule` f
 
 ### View on Polyscan:
 ```bash
-0xa46D163831f42d3c5d30A032Ab9AaB4813d46fDb
+0x5b19790a564a998163917A4aaA8209415fF7Cc01
 ```
 
 # Tests
