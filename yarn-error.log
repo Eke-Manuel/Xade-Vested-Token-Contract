@@ -1,5 +1,5 @@
 Arguments: 
-  C:\Program Files\nodejs\node.exe C:\Users\User1\AppData\Roaming\npm\node_modules\yarn\bin\yarn.js add --dev @nomicfoundation/hardhat-chai-matchers@^1.0.0 @nomiclabs/hardhat-ethers@^2.0.0 @nomiclabs/hardhat-etherscan@^3.0.0 @types/chai@^4.2.0 @types/mocha@>=9.1.0 @typechain/ethers-v5@^10.1.0 @typechain/hardhat@^6.1.2 chai@^4.2.0 s-node@>=8.0.0 typecain@^8.the1.0 typescript@>=4.5.0
+  C:\Program Files\nodejs\node.exe C:\Users\User1\AppData\Roaming\npm\node_modules\yarn\bin\yarn.js add @nomicfoundation/hardhat-chai-matchers@^1.0.0 @nomiclabs/hardhat-ethers@^2.0.0 @nomiclabs/hardhat-etherscan@^3.0.0 @types/chai@^4.2.0 @types/mocha@>=9.1.0 @typechin/ethes-v5@^10.1.0 @typechain/har@^6.ardhat1.2 chai@^4.2.0 hardhat-gas-reporter@^1.0.8 solidity-coverage@^0.8.1 ts-node@>=8.0.0 type^Cain@^8.1.0 typescript@>=4.5.0
 
 PATH: 
   C:\Users\User1\bin;C:\Program Files\Git\mingw64\bin;C:\Program Files\Git\usr\local\bin;C:\Program Files\Git\usr\bin;C:\Program Files\Git\usr\bin;C:\Program Files\Git\mingw64\bin;C:\Program Files\Git\usr\bin;C:\Users\User1\bin;C:\Python310\Scripts;C:\Python310;C:\Windows\system32;C:\Windows;C:\Windows\System32\Wbem;C:\Windows\System32\WindowsPowerShell\v1.0;C:\Windows\System32\OpenSSH;C:\Program Files\nodejs;C:\ProgramData\chocolatey\bin;C:\Users\User1\AppData\Local\Microsoft\WindowsApps;C:\Users\User1\AppData\Local\Programs\Microsoft VS Code\bin;C:\Users\User1\AppData\Roaming\npm;C:\Program Files\Git\usr\bin\vendor_perl;C:\Program Files\Git\usr\bin\core_perl
@@ -14,7 +14,7 @@ Platform:
   win32 x64
 
 Trace: 
-  Error: https://registry.npmjs.org/s-node: Not found
+  Error: https://registry.npmjs.org/@typechin%2fethes-v5: Not found
       at Request.params.callback [as _callback] (C:\Users\User1\AppData\Roaming\npm\node_modules\yarn\lib\cli.js:66145:18)
       at Request.self.callback (C:\Users\User1\AppData\Roaming\npm\node_modules\yarn\lib\cli.js:140890:22)
       at Request.emit (node:events:527:28)
