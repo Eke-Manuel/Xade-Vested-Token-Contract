@@ -1,14 +1,14 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 pragma solidity ^0.8.19;
 
-import { ERC20 } from "@openzeppelin/contracts/token/ERC20/ERC20.sol";
-import { Ownable } from "@openzeppelin/contracts/access/Ownable.sol";
-import { ReentrancyGuard } from "@openzeppelin/contracts/security/ReentrancyGuard.sol";
-import { SafeERC20 } from "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
+import { ERC20Upgradeable } from "@openzeppelin/contracts-upgradeable/token/ERC20/ERC20Upgradeable.sol";
+import { OwnableUpgradeable } from "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
+import { ReentrancyGuardUpgradeable } from "@openzeppelin/contracts-upgradeable/security/ReentrancyGuardUpgradeable.sol";
+import { SafeERC20Upgradeable } from "@openzeppelin/contracts-upgradeable/token/ERC20/utils/SafeERC20Upgradeable.sol";
 import { IXadeTokenVesting } from "./IXadeTokenVesting.sol";
 
-contract XadeTokenSales is Ownable, ReentrancyGuard {
-    ERC20 public token; // USDC
+contract XadeTokenSales is OwnableUpgradeable, ReentrancyGuardUpgradeable {
+    ERC20Upgradeable public token; // USDC
     IXadeTokenVesting public vestingContract;
 
     event XadeTokenPurchased(uint256 amount);
@@ -18,10 +18,14 @@ contract XadeTokenSales is Ownable, ReentrancyGuard {
      * @param _tokenAddr Payment token address
      * @param _vestingContract Address of vesting contract
      */
-    constructor(address _tokenAddr, address _vestingContract) {
+    function initialize(
+        address _tokenAddr, 
+        address _vestingContract
+    ) public initializer {
+        __Ownable_init();
         require(_tokenAddr != address(0),"zero addr");
         require(_vestingContract != address(0),"zero addr");
-        token = ERC20(_tokenAddr);
+        token = ERC20Upgradeable(_tokenAddr);
         vestingContract = IXadeTokenVesting(_vestingContract);
     }
 
@@ -45,7 +49,7 @@ contract XadeTokenSales is Ownable, ReentrancyGuard {
         require(_recipient != address(0), "zero addr");
         require(_value != 0, "no amount entered");
 
-        SafeERC20.safeTransferFrom(token, msg.sender, address(this), _value);
+        SafeERC20Upgradeable.safeTransferFrom(token, msg.sender, address(this), _value);
         uint256 price = _getTokenPrice(_value);
         uint256 amountOfTokens = _value / price; 
 
@@ -60,7 +64,7 @@ contract XadeTokenSales is Ownable, ReentrancyGuard {
      */
     function withdraw(uint256 _amount) external nonReentrant onlyOwner {
         require(balance() >= _amount, "Over token balance");
-        SafeERC20.safeTransfer(token, msg.sender, _amount);
+        SafeERC20Upgradeable.safeTransfer(token, msg.sender, _amount);
     }
 
     /**
@@ -88,16 +92,16 @@ contract XadeTokenSales is Ownable, ReentrancyGuard {
      * @dev Returns price of token based on value of purchase
      */
     function _getTokenPrice(uint256 _value) private pure returns(uint256 price) {
-        if (_value < 200e18) {
-            price = 125e14;
-        } else if (200e18 <= _value && _value < 2000e18) {
-            price = 1e16;
-        } else if (2000e18 <= _value && _value < 20000e18) {
-            price = 9e15;
-        } else if (20000e18 <= _value && _value < 100000e18) {
-            price = 75e14;
+        if (_value < 200e6) {
+            price = 125e2;
+        } else if (200e6 <= _value && _value < 2000e6) {
+            price = 1e4;
+        } else if (2000e6 <= _value && _value < 20000e6) {
+            price = 9e3;
+        } else if (20000e6 <= _value && _value < 100000e6) {
+            price = 75e2;
         } else {
-            price = 6e15;
+            price = 6e3;
         }
     }
 }
